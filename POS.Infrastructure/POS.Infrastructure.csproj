@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="Dtos\" />
-    <Folder Include="Persistences\Repositories\" />
-    <Folder Include="Persistences\Interfaces\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.24" />
   </ItemGroup>
 

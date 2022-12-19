@@ -1,30 +1,4 @@
-Instalacion de Paquetes..
-Domain
-* Microsoft.EntitieFrameworkCore.SQLServer
-* Microsoft.EntitieFrameworkCore.Tools
-Infrastructure
-* System.Linq.Dynamic.Core
-Application
-* Automapper
-* AutoMapper.Extensions.Microsoft.DependencyInjection
-* Azure.Storage.Blobs
-* FluentValidation.AspNetCore
-Api
-* Microsoft.EntityFrameworkCore.Design
-
-Conexión Entre Capas
-1. La Capa de Dominio (La mas Abajo), Por tanto ella no tiene Referencia de Ninguna
-2. La Capa Infrastructure (Siguiente), Referencia a Domain y a Utilities
-3. La Capa Application (Siguiente), Referencia a Dominio y a Infrastructure, ademas de Utilities
-4. La Capa Api (Siguiente), Referencia a Application, Infrastructure y Utilities
-5. En la Capa Test, solo se referencia la Api
-
-Realización del Escafolding (Se realiza en Domain)
-Administrador de Paquetes Nugets, en la Capa de Dominio, poner el siguiente Comando:
-* Scaffold-DbContext "Server=GEMA;Database=POS;Trusted_Connection=True;TrustServerCertificate=True;User=sa;Password=123456*A;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Entities
-
-Ctrl + K -> D ... Para Formatear el Codigo
-
+Video 3...
 Para Organizar mejor la Configuration generada por el Scaffolding. Se trata usar el EntityTypeConfiguration.
 * Se lleva el Context (POSContext) a la Capa de Infrastructure, a la Carpeta Persistences -> Contents
 * Se crea una Carpeta llamada Configuration dentro de la Carpeta Contents.
@@ -55,7 +29,3 @@ public static IServiceCollection AddInjectionInfrastructure(this IServiceCollect
 
             return services;
         }
-
-
-
-
