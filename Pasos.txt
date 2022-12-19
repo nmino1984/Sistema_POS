@@ -1,0 +1,61 @@
+Instalacion de Paquetes..
+Domain
+* Microsoft.EntitieFrameworkCore.SQLServer
+* Microsoft.EntitieFrameworkCore.Tools
+Infrastructure
+* System.Linq.Dynamic.Core
+Application
+* Automapper
+* AutoMapper.Extensions.Microsoft.DependencyInjection
+* Azure.Storage.Blobs
+* FluentValidation.AspNetCore
+Api
+* Microsoft.EntityFrameworkCore.Design
+
+Conexión Entre Capas
+1. La Capa de Dominio (La mas Abajo), Por tanto ella no tiene Referencia de Ninguna
+2. La Capa Infrastructure (Siguiente), Referencia a Domain y a Utilities
+3. La Capa Application (Siguiente), Referencia a Dominio y a Infrastructure, ademas de Utilities
+4. La Capa Api (Siguiente), Referencia a Application, Infrastructure y Utilities
+5. En la Capa Test, solo se referencia la Api
+
+Realización del Escafolding (Se realiza en Domain)
+Administrador de Paquetes Nugets, en la Capa de Dominio, poner el siguiente Comando:
+* Scaffold-DbContext "Server=GEMA;Database=POS;Trusted_Connection=True;TrustServerCertificate=True;User=sa;Password=123456*A;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Entities
+
+Ctrl + K -> D ... Para Formatear el Codigo
+
+Para Organizar mejor la Configuration generada por el Scaffolding. Se trata usar el EntityTypeConfiguration.
+* Se lleva el Context (POSContext) a la Capa de Infrastructure, a la Carpeta Persistences -> Contents
+* Se crea una Carpeta llamada Configuration dentro de la Carpeta Contents.
+* Se traslada cada una de las Clases que estan en Entties para la carpeta creada.
+* Cada una de las clases creadas van a "heredar" de la Interfaz IEntityTypeConfiguration<NombreDeLaClase>
+* Por cada una de las clases se debe instanciar (Implementar) el método Configure de la Interfaz, el cual sería lo que está en el método OnModelCreating de las clases que estamos trasladando
+
+/*/*/*/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Luego de crear todas las clases, debemos "Volver a Implementar" el método OnModelCreating, que se encuentra en POSContext, agregándole las líneas:
+- modelBuilder.HasAnnotation("Relational:Collation", "Modern_Spanish_CI_AS");
+- modelBuilder.ApplyConfigurationsFromAssembly/Assembly.GetExecutingAssemble());
+
+*Además, debemos eliminar por completo el método que contiene la Cadena de Conexión.
+
+Tener en cuenta "Limpiar" las referencias no usadas para dejar más limpio el código
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/**/*/*/*/*/*/*/*/*/*/*/*/
+* Ahora pasamos a crear una Clase con la que realizaremos la Conexión, ya que fue borrada anteriormente.
+Para esto creamos una clase InjectionExtensions, en la Capa Infrastructure, con el siguiente método:
+
+public static IServiceCollection AddInjectionInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        {
+            var assembly = typeof(POSContext).Assembly.FullName;
+
+            services.AddDbContext<POSContext>(
+                options => options.UseSqlServer(
+                    configuration.GetConnectionString("POSConnectionString"), b => b.MigrationsAssembly(assembly)), ServiceLifetime.Transient);
+
+            return services;
+        }
+
+
+
+
