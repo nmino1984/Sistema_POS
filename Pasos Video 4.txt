@@ -1,0 +1,63 @@
+Video 4... 
+* Configuración de la Cadena de Conexión.
+En el Proyecto API, agregar este NODO a los appsettings:
+"ConnectionStrings": {
+    "POSConectionString" : "Data Source=GEMA;Database=POS;User=sa;Password=123456*A;"
+  }
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
+* Definir las Clases Bases o Genéricas
+Creación de una Clase para la Paginación:
+
+public class BasePaginationRequest
+    {
+        public int NumPage { get; set; } = 1;
+        public int NumRecordsPage { get; set; } = 10;
+        public readonly int NumMaxRecordsPage = 50;
+        public string Order { get; set; } = "asc";
+        public string? Sort { get; set; } = null;
+        public int Records 
+        { 
+            get => NumRecordsPage;
+            set
+            {
+                NumRecordsPage = (value > NumMaxRecordsPage) ? NumMaxRecordsPage : value;
+            }
+        }
+
+    }
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
+* Implementación del Patrón Repository
+Creación de una Clase Interfaz: IGenericRepository.cs, en la carpeta de las Interfases
+
+public interface IGenericRepository<T> where T : class
+    {
+    }
+
+
+Creación de una Clase: GenericRepository.cs, en la carpeta Repositories
+
+public class GenericRepository<T> : IGenericRepository<T> where T : class  
+    {
+        protected IQueryable<TDTO> Ordering<TDTO>(BasePaginationRequest request, IQueryable<TDTO> queryable, bool pagination = false) where TDTO : class
+        {
+            IQueryable<TDTO> queryDto = request.Order == "desc" ? queryable.OrderBy($"{request.Sort} descending") : queryable.OrderBy($"{request.Sort} ascending");
+
+            if (pagination)
+            {
+                queryDto = queryDto.Paginate(request);
+            }
+            
+            return queryDto;
+        }
+    }
+
+Estas clases se usarán el la implementación de los métodos CRUD que se realizarán posteriormente
+
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*//
+* Implementación del Patrón UnitOfWork
+
+
+
