@@ -1,0 +1,42 @@
+Pasos del Video 7...
+* Al inicio se Crea en la Carpeta Statics, de las Utilities una Clase Enum, para definir un Enumerados que sea Inactivo = 0, Activo = 1.
+* Esto se usa inicialmente para que el método ListSelectCategories, de la Clase CategoryRepository, sea mas legible
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Ahora se pasa a la creación de los ViewModels (tambien se conocen como Dtos), una Clase CategoryRequestViewModel, usada para la Entrada de Datos en el Front, que será usado Angular y una clase CategoryResponseViewModel para Mostrar los Datos al Cliente.
+
+public class CategoryRequestViewModel
+    {
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public int State { get; set; }
+    }
+
+public class CategoryResponseViewModel
+    {
+        public int CategoryId { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public DateTime? AuditUpdateDate { get; set; }
+        public int State { get; set; }
+        public string? StateCategory { get; set; }
+
+    }
+/*/*/*/*/*/*/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
+* Ahora pasamos a utilizar el FluentValidator. Para esto, creamos en la carpeta Validators una Carpeta para cada Entidad (no se por que no se ponen afuera),
+* Dentro creamos una clase llamada CategoryValidator, que hereda de AbstractValidator, y que se le pasa la Clase que se va a validar.
+
+public class CategoryValidator : AbstractValidator<CategoryRequestViewModel>
+    {
+        public CategoryValidator()
+        {
+            RuleFor(x => x.Name)
+                .NotNull().WithMessage("Name can't be Null")
+                .NotEmpty().WithMessage("Name can't be Empty");
+
+
+            RuleFor(x => x.Description  )
+                .NotNull().WithMessage("Name can't be Null")
+                .NotEmpty().WithMessage("Name can't be Empty");
+        }
+    }

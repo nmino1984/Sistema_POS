@@ -1,4 +1,4 @@
-Video 5...
+Video 5... y Video 6
 * Comenzamos con el REGISTRO del patrón UnitOfWork... se realiza en la Capa de Infraestructura, en la Clase injectionExtensions
 
 /*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
