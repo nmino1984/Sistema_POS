@@ -1,22 +1,29 @@
-﻿using Microsoft.EntityFrameworkCore;
-using POS.Domain.Entities;
-using POS.Infrastructure.Commons.Bases.Request;
-using POS.Infrastructure.Commons.Bases.Response;
-using POS.Infrastructure.Persistences.Contexts;
-using POS.Infrastructure.Persistences.Interfaces;
+Video 5...
+* Comenzamos con el REGISTRO del patrón UnitOfWork... se realiza en la Capa de Infraestructura, en la Clase injectionExtensions
 
-namespace POS.Infrastructure.Persistences.Repositories
-{
-    public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
+* Ahora se pasa a la creación de varias Clases en la Carpeta Commons de la Clase Infrastructure
+* BaseEntityResponse, Clase genérica que será la que devolverá cada uno de los Listados
+* BaseFiltersRequest... que va a heredar de BasePaginationRequest
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Ahora se pasa a la Declaración de las Interfases de los CRUD de cada una de las Clases, del siguiente modo...
+
+public interface ICategoryRepository
     {
-        private readonly POSContext _context;
+        Task<BaseEntityResponse<Category>> ListCategories(BaseFiltersRequest filters);
+        Task<IEnumerable<Category>> ListSelectCategories();
+        Task<Category> GetById(int id);
+        Task<bool> RegisterCategory(Category category);
+        Task<bool> EditCategory(Category category);
+        Task<bool> DeleteCategory(int id);
+    }
 
-        public CategoryRepository(POSContext context)
-        {
-            _context = context;
-        }
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Ahora se pasa a la Implementación de la Clase Category Repository, en los 6 métodos declarados en la Interfaz.
 
-        public async Task<BaseEntityResponse<Category>> ListCategories(BaseFiltersRequest filters)
+* Este método devuelve una Lista a la que se le aplica los Filtros seleccionados en el Front.
+public async Task<BaseEntityResponse<Category>> ListCategories(BaseFiltersRequest filters)
         {
             var response = new BaseEntityResponse<Category>();
 
@@ -57,7 +64,8 @@ namespace POS.Infrastructure.Persistences.Repositories
 
         }
 
-        public async Task<IEnumerable<Category>> ListSelectCategories()
+* Este método devuelve una Lista de las Categorías para llenar un Combo o algo mas sencillo.
+public async Task<IEnumerable<Category>> ListSelectCategories()
         {
             var categories = await _context.Categories
                 .Where(w => w.State.Equals(1) && w.AuditDeleteUser == null && w.AuditDeleteDate == null).AsNoTracking().ToListAsync();
@@ -65,6 +73,7 @@ namespace POS.Infrastructure.Persistences.Repositories
             return categories;
         }
 
+* Este método devuelve una Categoría dado su Identificador:
         public async Task<Category> GetById(int id)
         {
             var category = await _context.Categories
@@ -73,6 +82,7 @@ namespace POS.Infrastructure.Persistences.Repositories
             return category!;
         }
 
+* Este método Inserta una Categorías, agregando los AuditCreateUser y AuditCreateDate:
         public async Task<bool> RegisterCategory(Category category)
         {
             //Momentaneamente se va a utilizar el User con id = 1...
@@ -90,6 +100,7 @@ namespace POS.Infrastructure.Persistences.Repositories
             return rowsAffected > 0;
         }
 
+* Este método Actualiza una Categoría, modificandole además los AuditUpdateUser y AuditUpdateDate
         public async Task<bool> EditCategory(Category category)
         {
             //Momentaneamente se va a utilizar el User con id = 1...
@@ -111,6 +122,7 @@ namespace POS.Infrastructure.Persistences.Repositories
             return rowsAffected > 0;
         }
 
+* Este método Elimina una Categoría, modificandole los AuditDeleteUser y AuditDeleteDate. Las Categorías no se ELIMINAN totalmente de la Base de Datos.
         public async Task<bool> DeleteCategory(int id)
         {
             var category = await _context.Categories
@@ -128,5 +140,3 @@ namespace POS.Infrastructure.Persistences.Repositories
             return rowsAffected > 0;
 
         }
-    }
-}
