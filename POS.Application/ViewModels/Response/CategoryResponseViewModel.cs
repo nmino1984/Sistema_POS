@@ -9,7 +9,5 @@
         public int State { get; set; }
         public string? StateCategory { get; set; }
 
-
-
     }
 }

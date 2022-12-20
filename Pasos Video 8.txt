@@ -1,0 +1,64 @@
+Video 8...
+* Creación de algunas CONSTANTES, las cuales tendrán los Mensajes que se van a devolver en la API.
+public class ReplyMessages
+    {
+        public const string MESSAGE_QUERY = "Succeed Query!";
+        public const string MESSAGE_QUERY_EMPTY = "No Items found!";
+        public const string MESSAGE_SAVE = "Item Saved Successfully";
+        public const string MESSAGE_UPDATE = "Item Updated Successfully";
+        public const string MESSAGE_DELETE = "Item Deleted Successfully";
+        public const string MESSAGE_EXIST = "Item Exists already.";
+        public const string MESSAGE_ACTIVATE = "Item has been Activated";
+        public const string MESSAGE_TOKEN = "Token generated Successfully";
+        public const string MESSAGE_VALIDATE = "Errors on the Validation";
+        public const string MESSAGE_FAILED = "Operation Failed";
+    }
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Se crea una Clase Base de respuesta (BaseResponse), que es la que se utilizará para manejar las Respuestas
+public class BaseResponse<T>
+    {
+        public bool IsSuccess { get; set; } 
+        public T? Data { get; set; }
+        public string? Message { get; set; }
+        public IEnumerable<ValidationFailure>? Errors { get; set; }
+
+    }
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*//*/*/
+* Se crea la interfaz ICategoryApplication, que es la que se utilizaría para heredar la Clase que se utilizará para los resultados que se mostrarán al Cliente Consumidor.
+
+public interface ICategoryApplication
+    {
+        Task<BaseResponse<BaseEntityResponse<CategoryResponseViewModel>>> ListCategories(BaseFiltersRequest filters);
+        Task<BaseResponse<IEnumerable<CategorySelectResponseViewModel>>> ListSelectCategories();
+        Task<BaseResponse<CategorySelectResponseViewModel>> GetCategoriesById(int id);
+        Task<BaseResponse<bool>> RegisterCategory(CategoryResponseViewModel requestViewModel);
+        Task<BaseResponse<bool>> EditCategory(int categoryId, CategoryResponseViewModel requestViewModel);
+        Task<BaseResponse<bool>> DeleteCategory(int id);
+
+    }
+
+*Además se implementa la clase CategoryApplication, que es la que tiene las implementaciones de la Interfaz. Esta implementación se realizará en el próximo video.
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Posteriormente se crean 3 atributos, privados y de Solo Lectura, que serán usados en el manejo de los Datos en esta Clase.
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+    private readonly CategoryValidator _validationRules;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

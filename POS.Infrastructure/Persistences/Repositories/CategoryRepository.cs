@@ -66,7 +66,7 @@ namespace POS.Infrastructure.Persistences.Repositories
             return categories;
         }
 
-        public async Task<Category> GetById(int id)
+        public async Task<Category> GetBategoryById(int id)
         {
             var category = await _context.Categories
                 .Where(w => w.CategoryId == id).AsNoTracking().FirstOrDefaultAsync();

@@ -15,6 +15,8 @@ namespace POS.Application.Validators.Category
             RuleFor(x => x.Description  )
                 .NotNull().WithMessage("Name can't be Null")
                 .NotEmpty().WithMessage("Name can't be Empty");
+
+
         }
     }
 }

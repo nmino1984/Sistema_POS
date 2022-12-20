@@ -8,7 +8,7 @@ namespace POS.Infrastructure.Persistences.Interfaces
     {
         Task<BaseEntityResponse<Category>> ListCategories(BaseFiltersRequest filters);
         Task<IEnumerable<Category>> ListSelectCategories();
-        Task<Category> GetById(int id);
+        Task<Category> GetBategoryById(int id);
         Task<bool> RegisterCategory(Category category);
         Task<bool> EditCategory(Category category);
         Task<bool> DeleteCategory(int id);
