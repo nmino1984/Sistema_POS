@@ -10,3 +10,15 @@ D:\GitHub\C#\Ejercicios_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\POS.U
 D:\GitHub\C#\Ejercicios_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\refint\POS.Utilities.dll
 D:\GitHub\C#\Ejercicios_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\POS.Utilities.pdb
 D:\GitHub\C#\Ejercicios_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\ref\POS.Utilities.dll
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\bin\Debug\net6.0\POS.Utilities.deps.json
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\bin\Debug\net6.0\POS.Utilities.dll
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\bin\Debug\net6.0\POS.Utilities.pdb
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\POS.Utilities.csproj.AssemblyReference.cache
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\POS.Utilities.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\POS.Utilities.AssemblyInfoInputs.cache
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\POS.Utilities.AssemblyInfo.cs
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\POS.Utilities.csproj.CoreCompileInputs.cache
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\POS.Utilities.dll
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\refint\POS.Utilities.dll
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\POS.Utilities.pdb
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Utilities\obj\Debug\net6.0\ref\POS.Utilities.dll
