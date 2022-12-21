@@ -102,6 +102,13 @@ D:\GitHub\C#\Ejercicios_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\refint\POS.
 D:\GitHub\C#\Ejercicios_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.pdb
 D:\GitHub\C#\Ejercicios_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.genruntimeconfig.cache
 D:\GitHub\C#\Ejercicios_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\ref\POS.Api.dll
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.csproj.AssemblyReference.cache
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.AssemblyInfoInputs.cache
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.AssemblyInfo.cs
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.csproj.CoreCompileInputs.cache
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.MvcApplicationPartsAssemblyInfo.cs
+D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.MvcApplicationPartsAssemblyInfo.cache
 D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\bin\Debug\net6.0\appsettings.Development.json
 D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\bin\Debug\net6.0\appsettings.json
 D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\bin\Debug\net6.0\POS.Api.exe
@@ -185,13 +192,6 @@ D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\bin\Debug\net6.0\POS.Ap
 D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\bin\Debug\net6.0\POS.Infrastructure.pdb
 D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\bin\Debug\net6.0\POS.Utilities.pdb
 D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\bin\Debug\net6.0\POS.Domain.pdb
-D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.csproj.AssemblyReference.cache
-D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.GeneratedMSBuildEditorConfig.editorconfig
-D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.AssemblyInfoInputs.cache
-D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.AssemblyInfo.cs
-D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.csproj.CoreCompileInputs.cache
-D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.MvcApplicationPartsAssemblyInfo.cs
-D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\POS.Api.MvcApplicationPartsAssemblyInfo.cache
 D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\staticwebassets\msbuild.POS.Api.Microsoft.AspNetCore.StaticWebAssets.props
 D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\staticwebassets\msbuild.build.POS.Api.props
 D:\GitHub\C#\Ejercicios_From_Youtube\Sistema_POS\POS.Api\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.POS.Api.props

@@ -123,12 +123,73 @@ namespace POS.Application.Services
 
         public async Task<BaseResponse<bool>> EditCategory(int categoryId, CategoryRequestViewModel requestViewModel)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse<bool>();
+            var categoryEdit = await GetCategoryById(categoryId);
+
+            if (categoryEdit is null)
+            {
+                response.IsSuccess = false;
+                response.Message = ReplyMessages.MESSAGE_QUERY_EMPTY;
+            }
+            else 
+            {
+                var validationResult = await _validationRules.ValidateAsync(requestViewModel);
+
+                if (!validationResult.IsValid)
+                {
+                    response.IsSuccess = false;
+                    response.Message = ReplyMessages.MESSAGE_VALIDATE;
+                    response.Errors = validationResult.Errors;
+
+                    return response;
+                }
+
+                var category = _mapper.Map<Category>(requestViewModel);
+                category.CategoryId = categoryId;
+                response.Data = await _unitOfWork.Category.EditCategory(category);
+
+                if (response.Data)
+                {
+                    response.IsSuccess = true;
+                    response.Message = ReplyMessages.MESSAGE_UPDATE;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = ReplyMessages.MESSAGE_FAILED;
+                }
+            }
+
+            return response;
         }
 
-        public async Task<BaseResponse<bool>> DeleteCategory(int id)
+        public async Task<BaseResponse<bool>> DeleteCategory(int categoryId)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse<bool>();
+            var categoryDelete = await GetCategoryById(categoryId);
+
+            if (categoryDelete is null)
+            {
+                response.IsSuccess = false;
+                response.Message = ReplyMessages.MESSAGE_QUERY_EMPTY;
+            }
+            else 
+            {
+                response.Data = await _unitOfWork.Category.DeleteCategory(categoryId);
+
+                if (response.Data)
+                {
+                    response.IsSuccess = true;
+                    response.Message = ReplyMessages.MESSAGE_DELETE;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = ReplyMessages.MESSAGE_FAILED;
+                }
+            }
+
+            return response;
         }
     }
 }
