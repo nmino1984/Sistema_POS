@@ -1,0 +1,273 @@
+Video 9
+* Se implemente ListCategories... así como los demás métodos de la Clase CategoryApplication
+
+*ListCategories --> Devuelve un Listado con todas las Categorías que son devueltas en el Método ListCategories de la Capa de Infraestructura
+public async Task<BaseResponse<BaseEntityResponse<CategoryResponseViewModel>>> ListCategories(BaseFiltersRequest filters)
+        {
+            var response = new BaseResponse<BaseEntityResponse<CategoryResponseViewModel>>();
+            var categories = await _unitOfWork.Category.ListCategories(filters);
+
+            if (categories is not null)
+            {
+                response.IsSuccess = true;
+                response.Data = _mapper.Map<BaseEntityResponse<CategoryResponseViewModel>>(categories);
+                response.Message = ReplyMessages.MESSAGE_QUERY;
+            }
+            else
+            {
+                response.IsSuccess = false;
+                response.Message = ReplyMessages.MESSAGE_QUERY_EMPTY;
+            }
+
+            return response;
+        }
+
+
+* ListSelectCategories --> Es para devolver los datos necesarios para llenar un Combo de Categoría
+public async Task<BaseResponse<IEnumerable<CategorySelectResponseViewModel>>> ListSelectCategories()
+        {
+            var response = new BaseResponse<IEnumerable<CategorySelectResponseViewModel>>();
+            var categories = await _unitOfWork.Category.ListSelectCategories();
+
+            if (categories is not null)
+            {
+                response.IsSuccess = true;
+                response.Data = _mapper.Map<IEnumerable<CategorySelectResponseViewModel>>(categories);
+                response.Message = ReplyMessages.MESSAGE_QUERY;
+            }
+            else
+            {
+                response.IsSuccess = false;
+                response.Message = ReplyMessages.MESSAGE_QUERY_EMPTY;
+            }
+
+            return response;
+
+        }
+
+
+*GetCategoryById --> Devuelve la Categoría correspondiente al Id que se le pasa, valiendose del método corespondiente en la Capa de infraestructura
+
+public async Task<BaseResponse<CategoryResponseViewModel>> GetCategoryById(int id)
+        {
+            var response = new BaseResponse<CategoryResponseViewModel>();
+            var category = await _unitOfWork.Category.GetBategoryById(id);
+
+            if (category is not null)
+            {
+                response.IsSuccess = true;
+                response.Data = _mapper.Map<CategoryResponseViewModel>(category);
+                response.Message = ReplyMessages.MESSAGE_QUERY;
+            }
+            else
+            {
+                response.IsSuccess = false;
+                response.Message = ReplyMessages.MESSAGE_QUERY_EMPTY;
+            }
+
+
+            return response;
+
+        }
+
+*RegisterCategory --> Registra una nueva Categoría, valiendose del método corespondiente en la Capa de infraestructura
+public async Task<BaseResponse<bool>> RegisterCategory(CategoryRequestViewModel requestViewModel)
+        {
+            var response = new BaseResponse<bool>();
+            var validationResult = await _validationRules.ValidateAsync(requestViewModel);
+
+            if (!validationResult.IsValid) 
+            {
+                response.IsSuccess = false; 
+                response.Message = ReplyMessages.MESSAGE_VALIDATE;
+                response.Errors = validationResult.Errors;
+
+                return response;
+            }
+             
+            var category = _mapper.Map<Category>(requestViewModel);
+            response.Data = await _unitOfWork.Category.RegisterCategory(category);
+
+            if (response.Data)
+            {
+                response.IsSuccess = true;
+                response.Message = ReplyMessages.MESSAGE_SAVE;
+            }
+            else
+            {
+                response.IsSuccess = false;
+                response.Message = ReplyMessages.MESSAGE_FAILED;
+            }
+
+            return response;
+        }
+
+*EditCategory--> Actualiza una Categoría, dado su Id, valiendose del método corespondiente en la Capa de infraestructura
+public async Task<BaseResponse<bool>> EditCategory(int categoryId, CategoryRequestViewModel requestViewModel)
+        {
+            var response = new BaseResponse<bool>();
+            var categoryEdit = await GetCategoryById(categoryId);
+
+            if (categoryEdit is null)
+            {
+                response.IsSuccess = false;
+                response.Message = ReplyMessages.MESSAGE_QUERY_EMPTY;
+            }
+            else 
+            {
+                var validationResult = await _validationRules.ValidateAsync(requestViewModel);
+
+                if (!validationResult.IsValid)
+                {
+                    response.IsSuccess = false;
+                    response.Message = ReplyMessages.MESSAGE_VALIDATE;
+                    response.Errors = validationResult.Errors;
+
+                    return response;
+                }
+
+                var category = _mapper.Map<Category>(requestViewModel);
+                category.CategoryId = categoryId;
+                response.Data = await _unitOfWork.Category.EditCategory(category);
+
+                if (response.Data)
+                {
+                    response.IsSuccess = true;
+                    response.Message = ReplyMessages.MESSAGE_UPDATE;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = ReplyMessages.MESSAGE_FAILED;
+                }
+            }
+
+            return response;
+        }
+
+*EditCategory--> Elimina una Categoría, dado su Id, valiendose del método corespondiente en la Capa de infraestructura
+public async Task<BaseResponse<bool>> DeleteCategory(int categoryId)
+        {
+            var response = new BaseResponse<bool>();
+            var categoryDelete = await GetCategoryById(categoryId);
+
+            if (categoryDelete is null)
+            {
+                response.IsSuccess = false;
+                response.Message = ReplyMessages.MESSAGE_QUERY_EMPTY;
+            }
+            else 
+            {
+                response.Data = await _unitOfWork.Category.DeleteCategory(categoryId);
+
+                if (response.Data)
+                {
+                    response.IsSuccess = true;
+                    response.Message = ReplyMessages.MESSAGE_DELETE;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = ReplyMessages.MESSAGE_FAILED;
+                }
+            }
+
+            return response;
+        }
+
+/*/*/*/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*//
+* Ahora se crea una nueva clase: CategoryMappingsProfile, que será utilizada para Mapear entre las Clase Category y CategoryResponseViewModel, BaseEntityResponse<Category>, BaseEntityResponse<CategoryResponseViewModel> ....  así como Category, CategorySelectResponseViewModel
+public class CategoryMappingsProfile : Profile
+    {
+        public CategoryMappingsProfile()
+        {
+            CreateMap<Category, CategoryResponseViewModel>()
+                .ForMember(x => x.StateCategory, x => x.MapFrom(y => y.State.Equals((int)StateTypes.Active) ? "Activo" : "Inactivo"))
+                .ReverseMap();
+
+            CreateMap<BaseEntityResponse<Category>, BaseEntityResponse<CategoryResponseViewModel>>()
+                .ReverseMap();
+
+            CreateMap<CategoryResponseViewModel, Category>();
+
+            CreateMap<Category, CategorySelectResponseViewModel>()
+                .ReverseMap();
+        }
+    }
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/**/*/*/*/
+* Se crea una Clase para la Inyección de los Servicios en la Capa de Aplicación... InjectionExtensions
+
+public static class InjectionExtensions
+    {
+        public static IServiceCollection AddInjectionApplication(this IServiceCollection services, IConfiguration configuration) 
+        {
+            services.AddSingleton(configuration);
+
+            services.AddFluentValidation(options =>
+            {
+                options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies().Where(w => !w.IsDynamic));
+            });
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            services.AddScoped<ICategoryApplication, CategoryApplication>();
+
+            return services;
+        }
+    }
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/**/
+* Se Agrega finalmente la Clase Controladora... CategoryController, agregándole TODOS los métodos para realizar el CRUD de Categoría...
+
+public class CategoryController : ControllerBase
+    {
+        private readonly ICategoryApplication _categoryApplication;
+
+        public CategoryController(ICategoryApplication categoryApplication)
+        {
+            this._categoryApplication = categoryApplication;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ListCategories([FromBody] BaseFiltersRequest filters)
+        {
+            var response = await _categoryApplication.ListCategories(filters);
+            return Ok(response);
+        }
+
+        [HttpGet("Select")]
+        public async Task<IActionResult> ListSelectCategories()
+        {
+            var response = await _categoryApplication.ListSelectCategories();
+            return Ok(response);
+        }
+
+        [HttpGet("{categoryId:int}")]
+        public async Task<IActionResult> CategoryById(int categoryId)
+        {
+            var response = await _categoryApplication.GetCategoryById(categoryId);
+            return Ok(response);
+        }
+
+        [HttpPost("Register")]
+        public async Task<IActionResult> RegisterCategory([FromBody] CategoryRequestViewModel requestViewModel)
+        {
+            var response = await _categoryApplication.RegisterCategory(requestViewModel);
+            return Ok(response);
+        }
+
+        [HttpPut("Edit/{categoryId:int}")]
+        public async Task<IActionResult> EditCategory([FromRoute] int categoryId, [FromBody] CategoryRequestViewModel requestViewModel)
+        {
+            var response = await _categoryApplication.EditCategory(categoryId, requestViewModel);
+            return Ok(response);
+        }
+
+        [HttpPut("Delete/{categoryId:int}")]
+        public async Task<IActionResult> DeleteCategory([FromRoute] int categoryId)
+        {
+            var response = await _categoryApplication.DeleteCategory(categoryId);
+            return Ok(response);
+        }
+    }
