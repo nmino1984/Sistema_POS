@@ -4,26 +4,26 @@ using POS.Infrastructure.Commons.Bases.Request;
 using POS.Infrastructure.Commons.Bases.Response;
 using POS.Infrastructure.Persistences.Contexts;
 using POS.Infrastructure.Persistences.Interfaces;
-using POS.Utilities.Statics;
 
 namespace POS.Infrastructure.Persistences.Repositories
 {
     public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
-        private readonly POSContext _context;
-
-        public CategoryRepository(POSContext context)
-        {
-            _context = context;
-        }
+        public CategoryRepository(POSContext context) : base(context) { }
 
         public async Task<BaseEntityResponse<Category>> ListCategories(BaseFiltersRequest filters)
         {
             var response = new BaseEntityResponse<Category>();
 
+            /* ///////////////////////////////////////////////////////////////////////////////////
+            Este era el método como estaba antes de realizar la implementación genérica
+            * ///////////////////////////////////////////////////////////////////////////////////
             var categories = (from c in _context.Categories
                               where c.AuditDeleteUser == null && c.AuditDeleteDate == null
                               select c).AsNoTracking().AsQueryable();
+            */
+
+            var categories = GetEntityQuery(x => x.AuditDeleteUser == null && x.AuditDeleteDate == null);
 
             if (filters.NumFilter is not null && !String.IsNullOrEmpty(filters.TextFilter))
             {
@@ -49,7 +49,7 @@ namespace POS.Infrastructure.Persistences.Repositories
             }
 
             if (filters.Sort is null)
-                filters.Sort = "CategoryId";
+                filters.Sort = "Id";
 
             response.TotalRecords = await categories.CountAsync();
             response.Items = await Ordering(filters, categories, !(bool)filters.Download!).ToListAsync();
@@ -58,6 +58,9 @@ namespace POS.Infrastructure.Persistences.Repositories
 
         }
 
+        #region Estos métodos ya se programan de tipo genéricos, por lo que ya no tienen que estar aqui en la Clase
+        /*////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         public async Task<IEnumerable<Category>> ListSelectCategories()
         {
             var categories = await _context.Categories
@@ -128,6 +131,7 @@ namespace POS.Infrastructure.Persistences.Repositories
             //En caso que se añada una fila va a devolver 1, que es > 0
             return rowsAffected > 0;
 
-        }
+        }*/
+        #endregion
     }
 }

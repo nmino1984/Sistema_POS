@@ -1,0 +1,206 @@
+Video 10...
+* Se realiza las Prueba de los EndPoints con el PostMan... Se crea una Carpeta para Agrupar todos los CRUD de Categoría
+
+
+Video 11...
+* Uso del Patrón repository:
+Se usa basicamente para abstraer de como se Conservan o Recuperan los Datos de una Base de Datos, ya que la Idea principal de este patron en Desacoplar la Capa de Acceso de Datos de la Capa Lógica del Negorio. 
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
+* Teniendo en cuenta que en la Capa de Dominio, podemos notar que la mayoría de las Entidades tienen varios atributos en común (Id, así como los campos de Auditoría), pasamos a la creación de una Clase Abstracta, de las cuales van a heredar muchas de esas clases (incluída Categoría)
+
+* La Clase se llamará BaseEntity, y tendrá los Atributos comunes...
+
+public abstract class BaseEntity
+{
+    public int Id { get; set; }
+    public int AuditCreateUser { get; set; }
+    public DateTime AuditCreateDate { get; set; }
+    public int? AuditUpdateUser { get; set; }
+    public DateTime? AuditUpdateDate { get; set; }
+    public int? AuditDeleteUser { get; set; }
+    public DateTime? AuditDeleteDate { get; set; }
+    public int State { get; set; }
+}
+
+* En la Clase Category, se dejan solamente los atributos únicos. 
+
+* Ademas, se deben modificar las Configuraciones, que están en la carpeta de Persistences, Contexts, Configurarions de la Capra de Infraestructura.
+
+* La Configuración de Categoría quieda así...
+
+public void Configure(EntityTypeBuilder<Category> builder)
+{
+     builder.HasKey(e => e.Id);
+
+     builder.Property(e => e.Id)
+         .HasColumnName("CategoryId");
+
+      builder.Property(e => e.Name).HasMaxLength(100);
+}
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
+* Ahora pasamos a la Declaración de los Métodos de la Interfaz IGenericRepository, que se pasará a implementar posteriormente.
+
+Así quedaría la declaración de la Clase..
+
+   Task<IEnumerable<T>> GetAsync(T entity);
+   Task<T> GetByIdAsync(int id);
+   Task<bool> RegisteAsync(T entity);
+   Task<bool> EditAsync(T entity);
+   Task<bool> DeleteAsync(int id);
+   IQueryable<T> GetEntityQuery(Expression<Func<T, bool>>? filter = null);
+   IQueryable<TDTO> Ordering<TDTO>(BasePaginationRequest request, IQueryable<TDTO> queryable, bool pagination = false) where TDTO : class;
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+Video 12...
+* Se pasa a la implementación de la Clase GenericRepository
+
+* Se declaran 2 atributos privados, readonly... quedando de la siguiente forma...
+
+   private readonly POSContext _context;
+   private readonly DbSet<T> _entity;
+
+   public GenericRepository(POSContext context, DbSet<T> entity)
+   {
+       _context = context;
+       _entity = _context.Set<T>();
+   }
+
+* Ahora se realiza la Implementación de los demás métodos de GenericRepository
+
+   public async Task<IEnumerable<T>> GetAllAsync()
+   {
+       var getAll = await _entity
+            .Where(w => w.State.Equals((int)StateTypes.Active) && w.AuditDeleteUser == null && w.AuditDeleteDate == null).AsNoTracking().ToListAsync();
+
+       return getAll;
+   }
+
+   public async Task<T> GetByIdAsync(int id)
+   {
+      var getById = await _entity.AsNoTracking().Where(w => w.Id == id).FirstOrDefaultAsync();
+
+      return getById!;
+   }
+
+   public async Task<bool> RegisteAsync(T entity)
+   {
+       entity.AuditCreateUser = 1;
+       entity.AuditCreateDate = DateTime.Now;
+
+       await _context.AddAsync(entity);
+
+       var rowsAffected = await _context.SaveChangesAsync();
+
+       return rowsAffected > 0;
+   }
+
+   public async Task<bool> EditAsync(T entity)
+   {
+       entity.AuditUpdateUser = 1;
+       entity.AuditUpdateDate = DateTime.Now;
+
+       _context.Update(entity);
+       _context.Entry(entity).Property(p => p.AuditCreateUser).IsModified = false;
+       _context.Entry(entity).Property(p => p.AuditCreateDate).IsModified = false;
+
+       var rowsAffected = await _context.SaveChangesAsync();
+
+       return rowsAffected > 0;
+   }
+
+   public async Task<bool> DeleteAsync(int id)
+   {
+       T entity = await GetByIdAsync(id);
+
+        entity!.AuditDeleteUser = 1;
+        entity!.AuditDeleteDate = DateTime.Now;
+
+        _context.Update(entity);
+
+        var rowsAffected = await _context.SaveChangesAsync();
+
+        return rowsAffected > 0;
+   }
+
+   public IQueryable<T> GetEntityQuery(Expression<Func<T, bool>>? filter = null)
+   {
+       IQueryable<T> query = _entity;
+
+       if (filter != null)
+       {
+           query = query.Where(filter);
+       }
+
+       return query;
+   }
+
+   public IQueryable<TDTO> Ordering<TDTO>(BasePaginationRequest request, IQueryable<TDTO> queryable, bool pagination = false) where TDTO : class
+   {
+   	IQueryable<TDTO> queryViewModel = request.Order == "desc" ? queryable.OrderBy($"{request.Sort} descending") : queryable.OrderBy($"{request.Sort} ascending");
+
+        if (pagination)
+        {
+            queryViewModel = queryViewModel.Paginate(request);
+        }
+            
+        return queryViewModel;
+   }
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Se realiza la implementación correcta de CategoryRepository, luego de las implementaciones genéricas realizadas.
+Solamente se va a quedar la implementación del método: 
+public async Task<BaseEntityResponse<Category>> ListCategories(BaseFiltersRequest filters)... que ahora ya no utilizará la variable _context, sino que usa el propio método GetEntityQuery(Expression<Func<T, bool>>? filter = null), heredado de genericRepository para obtener la clase Category a la que se le aplicarán los filtros correspondientes.
+
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Ahora se realizará la inyección del GenericRepository, en la Capa de Infraestructura
+
+* Se adiciona a los servicios las Clases IGenericRepository y GenericRepository... 
+     services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Ahora se realizan los cambios en la Capa de Aplicación, en la Clase de CategoryApplication que ya se programó. 
+* Se modifican las llamadas a los métodos, reemplazando los que estaban en CategoryRepository de la Clase GenericRepository... de la siguiente forma...
+
+   En el Método ListCategories(...)
+   var categories = await _unitOfWork.Category.ListCategories(filters)
+
+   En el Método ListSelectCategories(...)
+   var categories = await _unitOfWork.Category.GetAllAsync();
+
+   En el Método GetCategoryById(...)
+   var category = await _unitOfWork.Category.GetByIdAsync(id);
+
+   En el Método RegisterCategory(...)
+   response.Data = await _unitOfWork.Category.RegisteAsync(category);
+
+   En el Método EditCategory(...)
+   var categoryEdit = await GetCategoryById(categoryId);
+
+   En el Método DeleteCategory(...)
+   var categoryDelete = await GetCategoryById(categoryId);
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+* Posteriormente indicamos el Mapeo necesario para que el nuevo campo Id sea visto como el CategoryId de la tabla Category de la Base de Datos
+
+public CategoryMappingsProfile()
+   {
+       CreateMap<Category, CategoryResponseViewModel>()
+           .ForMember(x => x.CategoryId, x => x.MapFrom(y => y.Id))
+           .ForMember(x => x.StateCategory, x => x.MapFrom(y => y.State.Equals((int)StateTypes.Active) ? "Activo" : "Inactivo"))
+           .ReverseMap();
+
+       CreateMap<BaseEntityResponse<Category>, BaseEntityResponse<CategoryResponseViewModel>>()
+           .ReverseMap();
+
+       CreateMap<CategoryRequestViewModel, Category>();
+
+       CreateMap<Category, CategorySelectResponseViewModel>()
+           .ForMember(x => x.CategoryId, x => x.MapFrom(y => y.Id))
+           .ReverseMap();
+   }
+
+/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/
+Posteriormente son probados los EndPoints

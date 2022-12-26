@@ -50,7 +50,7 @@ namespace POS.Application.Services
         public async Task<BaseResponse<IEnumerable<CategorySelectResponseViewModel>>> ListSelectCategories()
         {
             var response = new BaseResponse<IEnumerable<CategorySelectResponseViewModel>>();
-            var categories = await _unitOfWork.Category.ListSelectCategories();
+            var categories = await _unitOfWork.Category.GetAllAsync();
 
             if (categories is not null)
             {
@@ -71,7 +71,7 @@ namespace POS.Application.Services
         public async Task<BaseResponse<CategoryResponseViewModel>> GetCategoryById(int id)
         {
             var response = new BaseResponse<CategoryResponseViewModel>();
-            var category = await _unitOfWork.Category.GetBategoryById(id);
+            var category = await _unitOfWork.Category.GetByIdAsync(id);
 
             if (category is not null)
             {
@@ -105,7 +105,7 @@ namespace POS.Application.Services
             }
              
             var category = _mapper.Map<Category>(requestViewModel);
-            response.Data = await _unitOfWork.Category.RegisterCategory(category);
+            response.Data = await _unitOfWork.Category.RegisteAsync(category);
 
             if (response.Data)
             {
@@ -145,8 +145,8 @@ namespace POS.Application.Services
                 }
 
                 var category = _mapper.Map<Category>(requestViewModel);
-                category.CategoryId = categoryId;
-                response.Data = await _unitOfWork.Category.EditCategory(category);
+                category.Id = categoryId;
+                response.Data = await _unitOfWork.Category.EditAsync(category);
 
                 if (response.Data)
                 {
@@ -175,7 +175,7 @@ namespace POS.Application.Services
             }
             else 
             {
-                response.Data = await _unitOfWork.Category.DeleteCategory(categoryId);
+                response.Data = await _unitOfWork.Category.DeleteAsync(categoryId);
 
                 if (response.Data)
                 {

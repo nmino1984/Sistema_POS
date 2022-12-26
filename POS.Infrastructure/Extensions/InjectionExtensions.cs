@@ -22,8 +22,10 @@ namespace POS.Infrastructure.Extensions
                 options => options.UseSqlServer(
                     configuration.GetConnectionString("POSConnectionString"), b => b.MigrationsAssembly(assembly)), ServiceLifetime.Transient);
 
-            services.AddTransient<IUnitOfWork, UnitOfWork>()
-;
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
             return services;
         }
     }

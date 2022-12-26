@@ -1,0 +1,4 @@
+Video 13... 
+Implementación de los Tests de Integración.
+* Para comenzar se crea la CLase que se utilizará para realizar los Test, que se llamará: CustomWebApplicationFactory, y además se elimina la clase Using.cs que está creada.
+* Esta clase la pondremos a heredar de WebApplicationFactory, que a su vez necesita la instalación de un paquete Nugets (Microsoft.AspNetCore.Mvc.Testing)
